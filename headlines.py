@@ -33,7 +33,8 @@ def get_news(publication="bbc"):
     #     </body>
     #     </html>""".format(first_article.get("title"), first_article.get("published"), first_article.get("summary"))
     # return render_template("home.html")
-    return render_template("home.html", title=first_article.get("title"), published=first_article.get("published"), summary=first_article.get("summary"))
+    # return render_template("home.html", title=first_article.get("title"), published=first_article.get("published"), summary=first_article.get("summary"))
+    return render_template("home.html", article=first_article)
 
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
