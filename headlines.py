@@ -1,7 +1,10 @@
+import json
+import urllib
 import feedparser
 from flask import Flask
 from flask import render_template
 from flask import request
+
 
 app = Flask(__name__)
 
@@ -28,6 +31,7 @@ def get_news():
     else:
         publication = query.lower()
     feed = feedparser.parse(RSS_FEEDS[publication])
+    weather = get_weather("Wuhan,CN")
     # first_article = feed['entries'][0]
     # return """<html>
     #     <body>
@@ -40,7 +44,21 @@ def get_news():
     # return render_template("home.html")
     # return render_template("home.html", title=first_article.get("title"), published=first_article.get("published"), summary=first_article.get("summary"))
     # return render_template("home.html", article=first_article)
-    return render_template("home.html", articles=feed['entries'])
+    return render_template("home.html", articles=feed['entries'], weather=weather)
+
+
+def get_weather(query):
+    api_url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=4feb58f738cdf939fa6a90a3a5d7224c'
+    query = urllib.parse.quote(query)
+    url = api_url.format(query)
+    data = urllib.request.urlopen(url).read().decode("utf-8")
+    parsed = json.loads(data)
+    weather = None
+    if parsed.get("weather"):
+        # python dictionary
+        weather = {"description":parsed["weather"][0]["description"],"temperature":parsed["main"]["temp"],"city":parsed["name"]}
+    return weather
+
 
 if __name__ == "__main__":
     app.run(port=5002, debug=True)
